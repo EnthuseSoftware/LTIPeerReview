@@ -19,7 +19,7 @@ namespace LTIPeerReview
             RouteConfig.RegisterRoutes(RouteTable.Routes);
             BundleConfig.RegisterBundles(BundleTable.Bundles);
 
-            Database.SetInitializer(new DataInitializer());
+            //Database.SetInitializer(new DataInitializer());
         }
     }
 }
