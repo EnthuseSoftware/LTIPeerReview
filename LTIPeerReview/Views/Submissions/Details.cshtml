@@ -1,0 +1,42 @@
+﻿@model LTIPeerReview.Models.Submission
+
+@{
+    ViewBag.Title = "Details";
+}
+
+<h2>Details</h2>
+
+<div>
+    <h4>Submission</h4>
+    <hr />
+    <dl class="dl-horizontal">
+        <dt>
+            @Html.DisplayNameFor(model => model.AssignmentGroup)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.AssignmentGroup)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.StudentGroup)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.StudentGroup)
+        </dd>
+
+        <dt>
+            @Html.DisplayNameFor(model => model.FilePath)
+        </dt>
+
+        <dd>
+            @Html.DisplayFor(model => model.FilePath)
+        </dd>
+
+    </dl>
+</div>
+<p>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+    @Html.ActionLink("Back to List", "Index")
+</p>
