@@ -26,12 +26,13 @@ namespace LTIPeerReview.Controllers
         }
 
         // GET: Tool/LTISpoof
+        [HttpGet]
         public ActionResult LTISpoof()
         {
             return View();
         }
 
-        // POST: Students/Create
+        
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LTISpoof([Bind(Include = "OrganizationID,CourseID,StudentID,Name,Roles,AssignmentName")] LTISpoof spoof)
@@ -73,8 +74,8 @@ namespace LTIPeerReview.Controllers
 
                 Session["StudentName"] = ltiRequest.LisPersonNameFull;
                 Session["StudentID"] = ltiRequest.LisPersonSourcedId;
-                Session["OrganizationID"] = ltiRequest.ContextOrg;
-                Session["CourseID"] = ltiRequest.ContextId;
+                Session["OrganizationID"] = ltiRequest.ToolConsumerInstanceGuid;
+                Session["CourseID"] = int.Parse(ltiRequest.ContextId);//TODO: replace with string; more versitile
                 Session["UserRoles"] = ltiRequest.Roles;
                 Session["AssignmentName"] = ltiRequest.ResourceLinkTitle;
 
@@ -87,16 +88,17 @@ namespace LTIPeerReview.Controllers
                 };
 
                 //check if user is an instructor or admin
-                
-                if (Session["Roles"].ToString().Contains("instructor") || Session["Roles"].ToString().Contains("admin"))
+
+                if (Session["UserRoles"] != null && (Session["UserRoles"].ToString().Contains("Instructor") || Session["UserRoles"].ToString().Contains("Admin")))
                 {
                     //if they are, redirect to dashboard
+                    return RedirectToAction("Admin");
                 }
 
                 using (PeerReviewModel db = new PeerReviewModel())
                 {
                     //check if user exists
-                    var student = db.Students.Find(ltiRequest.LisPersonSourcedId, ltiRequest.ContextOrg);
+                    var student = db.Students.Find(ltiRequest.LisPersonSourcedId, ltiRequest.ContextId, ltiRequest.ContextOrg);
                     if (student == null)
                     {
                         //if user does not exist, display error

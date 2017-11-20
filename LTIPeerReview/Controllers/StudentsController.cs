@@ -23,7 +23,7 @@ namespace LTIPeerReview.Controllers
             //               && s.CourseID == (int)Session["CourseID"]
             //               select s;
             string org = Session["OrganizationID"].ToString();
-            int course = (int)Session["CourseID"];
+            int course = (int)(Session["CourseID"]);
 
             var students = db.Students
                     .Where(s => s.OrganizationID == org && s.CourseID == course)
@@ -47,6 +47,7 @@ namespace LTIPeerReview.Controllers
         }
 
         // GET: Students/Create
+        [HttpGet]
         public ActionResult Create()
         {
             return View();
