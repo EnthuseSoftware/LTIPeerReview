@@ -1,4 +1,4 @@
-﻿@model LTIPeerReview.Models.Submission
+﻿@model LTIPeerReview.Models.Student
 
 @{
     Layout = null;
@@ -21,22 +21,22 @@
         @Html.AntiForgeryToken()
         
         <div class="form-horizontal">
-            <h4>Submission</h4>
+            <h4>Student ID / Group</h4>
             <hr />
-            @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+    
             <div class="form-group">
-                @Html.LabelFor(model => model.AssignmentGroup, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.StudentID, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.AssignmentGroup, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.AssignmentGroup, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.StudentID, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.StudentID, "", new { @class = "text-danger" })
                 </div>
             </div>
     
             <div class="form-group">
-                @Html.LabelFor(model => model.FilePath, htmlAttributes: new { @class = "control-label col-md-2" })
+                @Html.LabelFor(model => model.Group, htmlAttributes: new { @class = "control-label col-md-2" })
                 <div class="col-md-10">
-                    @Html.EditorFor(model => model.FilePath, new { htmlAttributes = new { @class = "form-control" } })
-                    @Html.ValidationMessageFor(model => model.FilePath, "", new { @class = "text-danger" })
+                    @Html.EditorFor(model => model.Group, new { htmlAttributes = new { @class = "form-control" } })
+                    @Html.ValidationMessageFor(model => model.Group, "", new { @class = "text-danger" })
                 </div>
             </div>
     
@@ -50,7 +50,6 @@
     
     <div>
         @Html.ActionLink("Back to List", "Index")
-        @Html.ActionLink("Administration", "Admin", "Tool")
     </div>
 </body>
 </html>

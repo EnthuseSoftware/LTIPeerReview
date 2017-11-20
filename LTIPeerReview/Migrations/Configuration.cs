@@ -9,8 +9,7 @@ namespace LTIPeerReview.Migrations
     {
         public Configuration()
         {
-            AutomaticMigrationsEnabled = true;
-            ContextKey = "LTIPeerReview.DAL.PeerReviewModel";
+            AutomaticMigrationsEnabled = false;
         }
 
         protected override void Seed(LTIPeerReview.DAL.PeerReviewModel context)

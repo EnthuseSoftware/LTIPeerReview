@@ -1,4 +1,4 @@
-﻿@model LTIPeerReview.Models.Submission
+﻿@model LTIPeerReview.Models.Student
 
 @{
     Layout = null;
@@ -14,23 +14,23 @@
 <body>
     <h3>Are you sure you want to delete this?</h3>
     <div>
-        <h4>Submission</h4>
+        <h4>Student</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.AssignmentGroup)
+                @Html.DisplayNameFor(model => model.Name)
             </dt>
     
             <dd>
-                @Html.DisplayFor(model => model.AssignmentGroup)
+                @Html.DisplayFor(model => model.Name)
             </dd>
     
             <dt>
-                @Html.DisplayNameFor(model => model.FilePath)
+                @Html.DisplayNameFor(model => model.Group)
             </dt>
     
             <dd>
-                @Html.DisplayFor(model => model.FilePath)
+                @Html.DisplayFor(model => model.Group)
             </dd>
     
         </dl>

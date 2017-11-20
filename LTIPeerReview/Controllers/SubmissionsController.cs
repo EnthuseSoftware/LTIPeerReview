@@ -18,23 +18,39 @@ namespace LTIPeerReview.Controllers
         // GET: Submissions
         public ActionResult Index()
         {
-            var list = db.Submissions.ToList();
-            return View(list);
+            string org = Session["OrganizationID"].ToString();
+            int course = (int)Session["CourseID"];
+
+            var submissions = db.Submissions
+                    .Where(s => s.Submitter.OrganizationID == org && s.Submitter.CourseID == course)
+                    .ToList();
+            return View(submissions);
         }
 
         // GET: Submissions/Details/5
-        public ActionResult Details(int? id)
+        public ActionResult Details()
         {
-            if (id == null)
-            {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
-            }
-            Submission submission = db.Submissions.Find(id);
-            if (submission == null)
-            {
-                return HttpNotFound();
-            }
-            return View(submission);
+            //string org = Session["OrganizationID"].ToString();
+            //int course = (int)Session["CourseID"];
+            //string user = Session["StudentID"].ToString();
+            //string assignment = Session["AssignmentName"].ToString();
+
+            //var student = db.Students.Find(org, course, user);
+            //if (student != null)
+            //{
+
+            //}
+            //if (id == null)
+            //{
+            //    return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            //}
+            //Submission submission = db.Submissions.Find(id);
+            //if (submission == null)
+            //{
+            //    return HttpNotFound();
+            //}
+            //return View(submission);
+            return View();
         }
 
         // GET: Submissions/Create
@@ -48,7 +64,7 @@ namespace LTIPeerReview.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create([Bind(Include = "ID,AssignmentGroup,StudentGroup,FilePath")] Submission submission)
+        public ActionResult Create([Bind(Include = "ID,AssignmentGroup,FilePath")] Submission submission)
         {
             if (ModelState.IsValid)
             {
@@ -80,7 +96,7 @@ namespace LTIPeerReview.Controllers
         // more details see https://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit([Bind(Include = "ID,AssignmentGroup,StudentGroup,FilePath")] Submission submission)
+        public ActionResult Edit([Bind(Include = "ID,AssignmentGroup,FilePath")] Submission submission)
         {
             if (ModelState.IsValid)
             {

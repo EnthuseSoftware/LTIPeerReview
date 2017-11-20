@@ -7,14 +7,18 @@ using System.Web;
 
 namespace LTIPeerReview.Models
 {
-    public class Group
+    public class AssignmentGroup
     {
         [Key]
-        public int ID { get; set; }
+        [Column(Order = 1)]
         public string OrganizationID { get; set; }
+        [Key]
+        [Column(Order = 2)]
         public int CourseID { get; set; }
-        public string GroupName { get; set; }
-        public virtual ICollection<Student> Students { get; set; }
+        [Key]
+        [Column(Order = 3)]
+        public string ReviewAppID { get; set; }
 
+        public string AssignmentAppID { get; set; }
     }
 }

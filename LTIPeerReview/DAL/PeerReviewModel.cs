@@ -25,7 +25,7 @@ namespace LTIPeerReview.DAL
         public DbSet<Student> Students { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<Submission> Submissions { get; set; }
-        public DbSet<Group> Groups { get; set; }
+        public DbSet<AssignmentGroup> AssignmentGroups { get; set; }
 
     }
 }

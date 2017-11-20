@@ -11,13 +11,19 @@ namespace LTIPeerReview.Models
     {
         [Key]
         [Column(Order = 1)]
-        public string StudentID { get; set; }
+        public string OrganizationID { get; set; }
         [Key]
         [Column(Order = 2)]
-        public string OrganizationID { get; set; }
+        public int CourseID { get; set; }
+        [Key]
+        [Column(Order = 3)]
+        public string StudentID { get; set; }
+        
         public string Name { get; set; }
+
+        public string Group { get; set; }
+
         public virtual ICollection<Submission> Submissions { get; set; }
-        public virtual ICollection<Group> Groups { get; set; }
         public virtual ICollection<Review> Reviews { get; set; }
     }
 }

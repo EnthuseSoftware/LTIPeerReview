@@ -1,4 +1,4 @@
-﻿@model LTIPeerReview.Models.Submission
+﻿@model LTIPeerReview.Models.Student
 
 @{
     Layout = null;
@@ -13,29 +13,29 @@
 </head>
 <body>
     <div>
-        <h4>Submission</h4>
+        <h4>Student</h4>
         <hr />
         <dl class="dl-horizontal">
             <dt>
-                @Html.DisplayNameFor(model => model.AssignmentGroup)
+                @Html.DisplayNameFor(model => model.Name)
             </dt>
     
             <dd>
-                @Html.DisplayFor(model => model.AssignmentGroup)
+                @Html.DisplayFor(model => model.Name)
             </dd>
     
             <dt>
-                @Html.DisplayNameFor(model => model.FilePath)
+                @Html.DisplayNameFor(model => model.Group)
             </dt>
     
             <dd>
-                @Html.DisplayFor(model => model.FilePath)
+                @Html.DisplayFor(model => model.Group)
             </dd>
     
         </dl>
     </div>
     <p>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.ID }) |
+        @Html.ActionLink("Edit", "Edit", new { /* id = Model.PrimaryKey */ }) |
         @Html.ActionLink("Back to List", "Index")
     </p>
 </body>

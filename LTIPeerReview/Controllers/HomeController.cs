@@ -8,6 +8,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.SessionState;
 using LTIPeerReview.Models;
+using LTIPeerReview.DAL;
 
 namespace LTIPeerReview.Controllers
 {
@@ -58,7 +59,10 @@ namespace LTIPeerReview.Controllers
                 }
 
                 Session["UploaderName"] = ltiRequest.LisPersonNameFull;
-                Session["UploaderId"] = ltiRequest.LisPersonSourcedId;
+                Session["UploaderID"] = ltiRequest.LisPersonSourcedId;
+                Session["OrganizationID"] = ltiRequest.ContextOrg;
+                Session["CourseID"] = ltiRequest.ContextId;
+                Session["Roles"] = ltiRequest.Roles;
                 //Session["UploaderGroupId"] = ltiRequest.LisGroupSourcedId;
                 //Session["AssignmentId"] = ltiRequest.ResourceLinkId;
                 // The request is legit, so display the tool
@@ -68,6 +72,23 @@ namespace LTIPeerReview.Controllers
                     ConsumerSecret = "secret",
                     LtiRequest = ltiRequest
                 };
+
+                //check if user exists
+                //if user does not exist, create one and add to agroup
+
+                using (PeerReviewModel db = new PeerReviewModel())
+                {
+                    var student = db.Students.Find(ltiRequest.LisPersonSourcedId);
+                    if (student == null)
+                    {
+                        db.Students.Add(new Student() {
+                            OrganizationID = ltiRequest.ContextOrg,
+                            StudentID = ltiRequest.LisPersonSourcedId,
+                            Name = ltiRequest.LisPersonNameFull
+                        });
+                        db.SaveChanges();
+                    }
+                }
                 return Redirect(url: "~/upload.aspx");
 
             }
