@@ -83,7 +83,7 @@ namespace LTIPeerReview
                     {
                         Submitter = student,
                         AssignmentGroup = Session["AssignmentName"].ToString(),
-                        FilePath = filepath + filename
+                        FilePath = Server.MapPath("~/App_Data/" + filename)
                     });
                     db.SaveChanges();
 

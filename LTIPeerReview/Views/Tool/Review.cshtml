@@ -1,4 +1,5 @@
-﻿@model LTIPeerReview.Models.ToolModel
+﻿
+@model LTIPeerReview.Models.ReviewHome
 @{
     Layout = null;
 }
@@ -8,11 +9,16 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
-    <title></title>
+    <title>Peer Review Home</title>
 </head>
 <body>
     <div>
-    
+
+        <h4>Hello, @Html.DisplayFor(model => model.ReviewerName)</h4><br/>
+        <h3>Peer review for @Html.DisplayFor(model => model.AssignmentName)</h3><br/>
+        <p>You have currently completed @Html.DisplayFor(model => model.FinishedReviews) review(s)</p><br/>
+        <p>@ViewBag.Message</p><br/>
+        <a href="~/ReviewUpload.aspx">Review Submission</a>
     </div>
 </body>
 </html>

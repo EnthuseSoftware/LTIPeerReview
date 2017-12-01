@@ -25,6 +25,11 @@ namespace LTIPeerReview.Controllers
             return View();
         }
 
+        public ActionResult ReviewAdmin()
+        {
+            return View();
+        }
+
         // GET: Tool/LTISpoof
         [HttpGet]
         public ActionResult LTISpoof()
@@ -32,7 +37,7 @@ namespace LTIPeerReview.Controllers
             return View();
         }
 
-        
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public ActionResult LTISpoof([Bind(Include = "OrganizationID,CourseID,StudentID,Name,Roles,AssignmentName")] LTISpoof spoof)
@@ -51,6 +56,7 @@ namespace LTIPeerReview.Controllers
         public ActionResult Upload()
         {
             Session["TestMessage"] = "Session Works!";
+            LTISpoof sessionData;
             try
             {
                 // Parse and validate the request
@@ -73,11 +79,22 @@ namespace LTIPeerReview.Controllers
                 }
 
                 Session["StudentName"] = ltiRequest.LisPersonNameFull;
-                Session["StudentID"] = ltiRequest.LisPersonSourcedId;
+                Session["StudentID"] = ltiRequest.LisPersonEmailPrimary;
+                //Session["StudentID"] = ltiRequest.LisPersonSourcedId;
                 Session["OrganizationID"] = ltiRequest.ToolConsumerInstanceGuid;
                 Session["CourseID"] = int.Parse(ltiRequest.ContextId);//TODO: replace with string; more versitile
                 Session["UserRoles"] = ltiRequest.Roles;
                 Session["AssignmentName"] = ltiRequest.ResourceLinkTitle;
+
+                sessionData = new LTISpoof()
+                {
+                    Name = Session["StudentName"].ToString(),
+                    StudentID = Session["StudentID"].ToString(),
+                    OrganizationID = Session["OrganizationID"].ToString(),
+                    CourseID = (int)Session["CourseID"],
+                    Roles = Session["UserRoles"].ToString(),
+                    AssignmentName = Session["AssignmentName"].ToString()
+                };
 
                 // The request is legit, so display the tool
                 ViewBag.Message = string.Empty;
@@ -98,7 +115,7 @@ namespace LTIPeerReview.Controllers
                 using (PeerReviewModel db = new PeerReviewModel())
                 {
                     //check if user exists
-                    var student = db.Students.Find(ltiRequest.LisPersonSourcedId, ltiRequest.ContextId, ltiRequest.ContextOrg);
+                    var student = db.Students.Find(sessionData.OrganizationID, sessionData.CourseID, sessionData.StudentID);
                     if (student == null)
                     {
                         //if user does not exist, display error
@@ -123,5 +140,138 @@ namespace LTIPeerReview.Controllers
                 return View();
             }
         }
+
+        public ActionResult Review()
+        {
+            Session["TestMessage"] = "Session Works!";
+            LTISpoof sessionData;
+            try
+            {
+                // Parse and validate the request
+                Request.CheckForRequiredLtiParameters();
+
+                var ltiRequest = new LtiRequest(null);
+                ltiRequest.ParseRequest(Request);
+
+                if (!ltiRequest.ConsumerKey.Equals("12345"))
+                {
+                    ViewBag.Message = "Invalid Consumer Key";
+                    return View();
+                }
+
+                var oauthSignature = Request.GenerateOAuthSignature("secret");
+                if (!oauthSignature.Equals(ltiRequest.Signature))
+                {
+                    ViewBag.Message = "Invalid Signature";
+                    return View();
+                }
+
+                Session["StudentName"] = ltiRequest.LisPersonNameFull;
+                Session["StudentID"] = ltiRequest.LisPersonEmailPrimary;
+                //Session["StudentID"] = ltiRequest.LisPersonSourcedId;
+                Session["OrganizationID"] = ltiRequest.ToolConsumerInstanceGuid;
+                Session["CourseID"] = int.Parse(ltiRequest.ContextId);//TODO: replace with string; more versitile
+                Session["UserRoles"] = ltiRequest.Roles;
+                Session["AssignmentName"] = ltiRequest.ResourceLinkTitle;
+
+                sessionData = new LTISpoof()
+                {
+                    Name = Session["StudentName"].ToString(),
+                    StudentID = Session["StudentID"].ToString(),
+                    OrganizationID = Session["OrganizationID"].ToString(),
+                    CourseID = (int)Session["CourseID"],
+                    Roles = Session["UserRoles"].ToString(),
+                    AssignmentName = Session["AssignmentName"].ToString()
+                };
+
+                // The request is legit, so display the tool
+                ViewBag.Message = string.Empty;
+                var model = new ToolModel
+                {
+                    ConsumerSecret = "secret",
+                    LtiRequest = ltiRequest
+                };
+
+                
+
+                //check if user is an instructor or admin
+
+                if (sessionData.Roles != null && (sessionData.Roles.Contains("Instructor") || sessionData.Roles.Contains("Admin")))
+                {
+                    //if they are, redirect to dashboard
+                    return RedirectToAction("ReviewAdmin");
+                }
+
+
+                using (PeerReviewModel db = new PeerReviewModel())
+                {
+                    //check if user exists
+                    var student = db.Students.Find(sessionData.OrganizationID, sessionData.CourseID, sessionData.StudentID);
+
+                   if (student == null)
+                    {
+                        //if user does not exist, display error
+                        ViewBag.Message = "You have not been registered to use this tool.  Contact your instructor for assistance.";
+                        return View();//TODO: redirect to error screen
+                    }
+                    else
+                    {
+                        //if they do, update the entry with their name
+                        student.Name = sessionData.Name;
+                        db.Entry(student).State = EntityState.Modified;
+                        db.SaveChanges();
+                    }
+
+                    //create the view model
+                    var viewModel = new ReviewHome()
+                    {
+                        ReviewerName = sessionData.Name,
+                        AssignmentName = sessionData.AssignmentName,
+                        FinishedReviews = student.Reviews.Count
+                    };
+
+                    //check that review tool has been registered
+                    var assignmentGroup = db.AssignmentGroups.Find(sessionData.OrganizationID, sessionData.CourseID, sessionData.AssignmentName);
+                    if (assignmentGroup == null || string.IsNullOrWhiteSpace(assignmentGroup.AssignmentAppID))
+                    {
+                        ViewBag.Message = "This review tool has not been registered with a submission assignment.  Contact your instructor to resolve this issue.";
+                        return View(viewModel);//TODO: redirect to error screen
+                    }
+                    //get list of submissions in assignment group
+                    List<Submission> submissions = db.Submissions
+                        .Where(s => s.Submitter.OrganizationID == sessionData.OrganizationID
+                            && s.Submitter.CourseID == sessionData.CourseID)
+                        .ToList();
+                    if (submissions == null || submissions.Count == 0)
+                    {
+                        ViewBag.Message = "No submissions found."
+                            + "  Either no assignments have been submitted, or the review tool is registered incorrectly.";
+                        return View(viewModel);
+                    }
+
+                    submissions = db.Submissions
+                        .Where(s => s.Submitter.OrganizationID == sessionData.OrganizationID
+                            && s.Submitter.CourseID == sessionData.CourseID
+                            && s.Submitter.Group != student.Group)
+                        .ToList();
+                    if (submissions == null || submissions.Count == 0)
+                    {
+                        ViewBag.Message = "No submissions found for you to review."
+                            + "  No student from another group has submitted an assignment yet.  Check back later.";
+                        return View(viewModel);
+                    }
+                    return View(viewModel);
+                }
+                
+
+            }
+            catch (LtiException e)
+            {
+                ViewBag.Message = e.Message;
+                //return Redirect(url: "~/upload.aspx");
+                return View();
+            }
+        }
     }
+
 }

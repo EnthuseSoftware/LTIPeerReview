@@ -1,0 +1,22 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Peer Review Administration</title>
+</head>
+<body>
+    <h4>Peer Review Assignment Administration for @ViewBag.Message</h4>
+    <div>
+        @Html.ActionLink("Register Review Tool", "Create", "AssignmentGroups")<br />
+        @Html.ActionLink("Submissions", "Index", "Submissions")<br />
+        @Html.ActionLink("Register Students", "Index", "Students")<br />
+        @Html.ActionLink("Spoof LTI Data", "LTISpoof")<br />
+    </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+﻿
+@model LTIPeerReview.Models.Review
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Create</title>
+</head>
+<body>
+    @using (Html.BeginForm())
+    {
+        @Html.AntiForgeryToken()
+        <div class="form-horizontal">
+            <h4>Peer Review</h4>
+            <hr />
+            <h6>Developer: @Html.DisplayFor(model => model.ReviewedSubmission.Submitter.Name)</h6>
+            <h6>Assignment: @Html.DisplayFor(model => model.ReviewedSubmission.AssignmentGroup)</h6>
+            <h6>Group: @Html.DisplayFor(model => model.ReviewedSubmission.Submitter.Group)</h6>
+
+            <h4><a href="@Html.DisplayFor(model => model.ReviewedSubmission.FilePath)">Download Beta Files</a></h4>
+
+            <form method="post" enctype="multipart/form-data" runat="server">
+                <input type="file" name="file" id="reviewUpload" runat="server"/>
+                <button type="submit">Upload Review</button>
+            </form>
+            <p>@ViewBag.Message</p>
+        </div>
+    }
+    <div>
+        @Html.ActionLink("Back", "Review", "Tool")
+    </div>
+</body>
+</html>
